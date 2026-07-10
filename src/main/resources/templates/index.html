@@ -1,31 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="ru">
+<html xmlns="http://www.w3.org/1999/html" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расчетная система с таблицей результатов</title>
+    <title>Расчет ведомости материалов</title>
     <link rel="stylesheet" href="/css/style.css">
-<!--    <script src="/js/script.js" defer></script>-->
+    <link rel="stylesheet" href="/css/styleResult.css">
+    <script src="js/scripts.js" defer></script>
 </head>
 <body>
 <div class="container">
-    <form th:action="@{/logout}" method="post">
-<!--        <button id="resetBtnExit" type="submit" class="button-group" >-->
-<!--            <i class="fas fa-sign-out-alt"></i> Выход пользователя-->
-<!--        </button>-->
-    </form>
+    <!--    <form th:action="@{/logout}" method="post">-->
+    <!--        <button id="resetBtnExit" type="submit" class="button-group" >-->
+    <!--            <i class="fas fa-sign-out-alt"></i> Выход пользователя-->
+    <!--        </button>-->
+    <!--    </form>-->
     <h1>Предварительная ведомость материалов</h1>
     <p class="subtitle">Введите параметры для расчета</p>
     <form id="calculationForm" method="post" action="/calculation">
-
         <div class="input-section">
-
             <div class="section-title">Параметры расчета</div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="label-name" for="name">Наименование:</label>
-                    <input type="text" id="name"  name="name" placeholder="Наименование аппарата" value="Теплообменник">
+                    <input type="text" id="name" name="name" placeholder="Наименование" value="Теплообменник">
                 </div>
 
                 <div class="form-group-min">
@@ -108,7 +106,7 @@
 
                 <div class="form-group">
                     <label class="label-name" for="length-tube">Длина т/о труб, мм:</label>
-                    <input type="number" id="length-tube" name="lengthTube" placeholder="Введите число" step="100">
+                    <input type="number" id="length-tube" name="lengthTube" placeholder="Длина трубы" step="any">
                 </div>
 
                 <div class="form-group-min">
@@ -124,15 +122,12 @@
 
                 <div class="form-group">
                     <label class="label-name" for="number-vessel">Номер заявки: СИ-</label>
-                    <input type="number" id="number-vessel" name="numberVessel" placeholder="Введите номер" step="any">
+                    <input type="number" id="number-vessel" name="numberVessel" placeholder="Номер" step="any">
                 </div>
-
-
 
 
             </div>
             <div class="section-title">Дополнительные параметры</div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="label-name" for="standard">Норматив:</label>
@@ -144,7 +139,8 @@
 
                 <div class="form-group">
                     <label class="label-name" for="quantity-tube">Количество труб, шт:</label>
-                    <input type="number" id="quantity-tube" name="quantityTube" placeholder="Введите количество" step="any">
+                    <input type="number" id="quantity-tube" name="quantityTube" placeholder="Количество"
+                           step="any">
                 </div>
 
                 <div class="form-group-min">
@@ -160,41 +156,65 @@
 
                 <div class="form-group">
                     <label class="label-name" for="pressure-tube-calculate">Расчетное давление тр/пр, МПа:</label>
-                    <input type="number" id="pressure-tube-calculate" name="pressureTubeCalculate" placeholder="Введите число">
+                    <input type="number" id="pressure-tube-calculate" name="pressureTubeCalculate"
+                           placeholder="Давление">
                 </div>
 
                 <div class="form-group">
-                    <label class="label-name" for="pressure-inter-tube-calculate">Расчетное давление межтр/пр, МПа:</label>
-                    <input type="number" id="pressure-inter-tube-calculate" name="pressureInterTubeCalculate" placeholder="Введите число">
+                    <label class="label-name" for="pressure-inter-tube-calculate">Расчетное давление межтр/пр,
+                        МПа:</label>
+                    <input type="number" id="pressure-inter-tube-calculate" name="pressureInterTubeCalculate"
+                           placeholder="Давление">
                 </div>
 
                 <div class="form-group">
-                    <label class="label-name" for="temperature-tube-calculate">Расчетная температура тр/пр, град:</label>
-                    <input type="number" id="temperature-tube-calculate" name="temperatureTubeCalculate" placeholder="Введите число">
+                    <label class="label-name" for="temperature-tube-calculate">Расчетная температура тр/пр,
+                        град:</label>
+                    <input type="number" id="temperature-tube-calculate" name="temperatureTubeCalculate"
+                           placeholder="Температура">
                 </div>
                 <div class="form-group">
-                    <label class="label-name" for="temperature-inter-tube-calculate">Расчетная температура межтр/пр, град:</label>
-                    <input type="number" id="temperature-inter-tube-calculate" name="temperatureInterTubeCalculate" placeholder="Введите число">
+                    <label class="label-name" for="temperature-inter-tube-calculate">Расчетная температура межтр/пр,
+                        град:</label>
+                    <input type="number" id="temperature-inter-tube-calculate" name="temperatureInterTubeCalculate"
+                           placeholder="Температура">
                 </div>
 
             </div>
-
-
         </div>
-
         <div class="button-group">
-            <button type="submit" id="calculateBtn">
+            <button type="button" id="calculateBtn">
                 <span>⚡</span> Рассчитать
             </button>
-
             <button type="button" id="resetBtn" onclick="document.getElementById('calculationForm').reset()">
                 <span>🔄</span> Сбросить
             </button>
         </div>
-
     </form>
 
 </div>
+<div class="container">
 
+    <div class="button" style="display: flex; justify-content: flex-end;">
+        <button class="button-group" style="background-color: #2b5e8a" onclick="window.print()"> Печать / PDF </button>
+    </div>
+
+    <div class="page-header">
+        <h1>📋 Ведомость материалов <small>предварительная</small></h1>
+    </div>
+
+    <div id="globalTotalContainer" class="global-total">
+        <span class="label">🏷️ Общая масса:</span>
+        <span class="value" id="globalTotal">0</span> <span>кг</span>
+    </div>
+
+    <div id="loading" class="loading-indicator">🔄 Загрузка данных...</div>
+    <div id="groupsContainer"></div>
+
+    <div style="margin-top: 1.5rem; border-top: 1px solid #d0ddee; padding-top: 0.8rem; font-size: 0.75rem; color: #3e6180; text-align: center;">
+        💡 <strong>Инструкция для PDF:</strong> нажмите кнопку «Печать / PDF», в диалоге выберите «Сохранить как PDF», установите масштаб <strong>«Вписать»</strong> — вся таблица поместится на одном листе А4 в альбомной ориентации.
+    </div>
+
+</div>
 </body>
 </html>

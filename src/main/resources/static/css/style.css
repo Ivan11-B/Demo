@@ -332,6 +332,24 @@ td:last-child {
     font-size: 14px;
     color: #95a5a6;
 }
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.pdf-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.pdf-toolbar .info {
+    margin-right: auto;
+    color: #3a5a7a;
+    font-size: 0.85rem;
+}
+
 
 @media (max-width: 1200px) {
     .container {

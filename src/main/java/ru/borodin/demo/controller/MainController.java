@@ -1,11 +1,11 @@
 package ru.borodin.demo.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import ru.borodin.demo.model.Request;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -21,8 +21,12 @@ public class MainController {
     }
 
     @PostMapping("/calculation")
-    public String calculation(@ModelAttribute Request request) {
-        System.out.println(request);
-        return "result";
+    @ResponseBody
+    public Map<String, Object> calculation(@RequestBody Request request) {
+        double result = 0.5;
+        Map<String, Object> response = new HashMap<>();
+        response.put("calculatedValue", result);
+
+        return response;
     }
 }
