@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спецификация металлопроката</title>
+    <style>
+        /* --- Стили для экрана --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f5f8fc;
+            color: #0b1a2f;
+            padding: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .pdf-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .pdf-toolbar .info {
+            margin-right: auto;
+            color: #3a5a7a;
+            font-size: 0.85rem;
+        }
+
+        .btn {
+            background: #1a3a5a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+            box-shadow: 0 4px 12px rgba(26, 58, 90, 0.25);
+        }
+        .btn:hover {
+            background: #0f2a44;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .page-header {
+            margin-bottom: 1.2rem;
+        }
+        .page-header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: #0a1e2f;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .page-header h1 small {
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: #3a5a7a;
+            background: #e3ecf5;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+        }
+        .page-header .subtitle {
+            color: #1f405e;
+            margin-top: 0.3rem;
+            padding: 0.3rem 1rem;
+            background: #eaf1fa;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 0.85rem;
+            border-left: 4px solid #2b7be4;
+        }
+
+        .global-total {
+            background: #1a3a5a;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(26, 58, 90, 0.3);
+        }
+        .global-total .label { font-weight: 400; opacity: 0.85; }
+        .global-total .value { font-size: 1.2rem; color: #ffd866; }
+
+        .group {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 20, 50, 0.05);
+            margin-bottom: 1.2rem;
+            border: 1px solid #e3ecf5;
+            overflow: hidden;
+        }
+        .group-header {
+            background: #fafdff;
+            padding: 0.6rem 1.2rem;
+            border-bottom: 2px solid #d0ddee;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            cursor: pointer;
+            user-select: none;
+        }
+        .group-header:hover { background: #f0f6fe; }
+        .group-header .toggle-icon {
+            font-size: 1rem;
+            transition: transform 0.3s;
+            display: inline-block;
+            width: 1.2rem;
+            text-align: center;
+        }
+        .group-header .toggle-icon.collapsed { transform: rotate(-90deg); }
+        .group-header h2 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #0b2a44;
+        }
+        .group-header .badge {
+            background: #d4e2f0;
+            color: #1a3857;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 0.1rem 0.7rem;
+            border-radius: 40px;
+            text-transform: uppercase;
+        }
+        .group-header .total-weight {
+            margin-left: auto;
+            font-weight: 600;
+            color: #0b2a44;
+            background: #eaf1fa;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+        .group-body {
+            padding: 1rem 1.2rem 1.2rem;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            overflow: hidden;
+        }
+        .group-body.collapsed {
+            max-height: 0 !important;
+            padding: 0 1.2rem;
+            border: none;
+        }
+
+        .subgroup-header-row td {
+            background: #f2f8ff;
+            border-left: 3px solid #4a90d9;
+            padding: 0.3rem 0.7rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #d0ddee;
+        }
+        .simple-items .subgroup-header-row td {
+            background: #f7f4fc;
+            border-left-color: #b8a8d0;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            margin-top: 0.3rem;
+        }
+        .detail-table th {
+            text-align: left;
+            padding: 0.4rem 0.7rem;
+            background: #f2f8ff;
+            font-weight: 600;
+            color: #1d3b57;
+            border-bottom: 2px solid #d0ddee;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .detail-table td {
+            padding: 0.4rem 0.7rem;
+            border-bottom: 1px solid #eaf1fa;
+            vertical-align: middle;
+        }
+        .detail-table tr:last-child td { border-bottom: none; }
+        .detail-table tr:hover td { background: #f8fcff; }
+        .detail-table .col-name { font-weight: 500; color: #0b2a44; }
+        .detail-table .col-qty { text-align: center; }
+        .detail-table .col-unit-weight { text-align: right; }
+        .detail-table .col-total-weight { text-align: right; font-weight: 500; color: #0f2e4a; }
+        .detail-table .col-note { color: #4a6a8a; font-size: 0.8rem; }
+
+        .subgroup-total-row td,
+        .group-total-row td,
+        .global-total-row td {
+            border-top: 2px solid #000;
+            padding: 0.3rem 0.7rem;
+            font-weight: 600;
+        }
+        .subgroup-total-row td { background: #f5faff; }
+        .group-total-row td {
+            background: #eaf3fc;
+            font-weight: 700;
+            padding: 0.4rem 0.7rem;
+        }
+        .global-total-row td {
+            background: #d9e1ec;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 0.5rem 0.7rem;
+        }
+
+        .loading-indicator {
+            color: #2b5e8a;
+            font-style: italic;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        /* ============================================================ */
+        /* СТИЛИ ДЛЯ ПЕЧАТИ — сохранён стиль шрифта, альбомная ориентация */
+        /* ============================================================ */
+        @page {
+            size: A4 landscape;
+            margin: 5mm;
+        }
+
+        @media print {
+            /* Скрываем все элементы управления */
+            .pdf-toolbar,
+            .page-header .subtitle,
+            .badge,
+            .toggle-icon,
+            .group-header .total-weight,
+            .group-header .badge,
+            .group-header .toggle-icon,
+            .subgroup-header .toggle-icon,
+            .subgroup-header .sub-total,
+            .subgroup-header .counter,
+            .subgroup-footer,
+            .group-total-footer,
+            .loading-indicator,
+            .container > div:last-child,
+            .global-total {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                font-size: 8pt;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                line-height: 1.3;
+            }
+
+            .page-header h1 {
+                font-size: 11pt;
+                margin-bottom: 0.5mm;
+                border-bottom: 1px solid #000;
+                padding-bottom: 0.3mm;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .page-header h1 small {
+                font-size: 10pt;
+                background: none;
+                color: #000;
+                padding: 0;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .page-header {
+                margin-bottom: 0.5mm;
+            }
+
+            .group {
+                border: 1px solid #000;
+                border-radius: 0;
+                box-shadow: none;
+                margin-bottom: 0.5mm;
+                page-break-inside: avoid;
+            }
+            .group-header {
+                background: #f2f2f2 !important;
+                border-bottom: 1px solid #000;
+                padding: 0.3mm 0.5mm;
+            }
+            .group-header h2 {
+                font-size: 9pt;
+                font-weight: 700;
+                line-height: 1.3;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .group-body {
+                padding: 0.3mm 0.5mm;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+
+            .subgroup-header-row td {
+                background: #f9f9f9 !important;
+                border-left: 1px solid #000;
+                padding: 0.2mm 0.5mm;
+                font-size: 8.5pt;
+                font-weight: 600;
+                line-height: 1.3;
+                border-bottom: 1px solid #000;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+
+            .detail-table {
+                border-collapse: collapse;
+                width: 100%;
+                table-layout: fixed;
+                font-size: 8pt;
+                box-shadow: none;
+                border: 1px solid #000;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .detail-table th {
+                background: #eaeaea !important;
+                border: 1px solid #000;
+                padding: 0.2mm 0.4mm;
+                font-size: 7.5pt;
+                font-weight: 700;
+                line-height: 1.3;
+                text-transform: uppercase;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .detail-table td {
+                border: 1px solid #000;
+                padding: 0.2mm 0.4mm;
+                font-size: 8pt;
+                font-weight: 400;
+                line-height: 1.3;
+                word-wrap: break-word;
+                word-break: break-word;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .detail-table tr:hover td {
+                background: transparent !important;
+            }
+
+            /* Узкие колонки */
+            .detail-table th:nth-child(1),
+            .detail-table td:nth-child(1) { width: 12%; }  /* Наименование */
+            .detail-table th:nth-child(2),
+            .detail-table td:nth-child(2) { width: 18%; }  /* Характеристика */
+            .detail-table th:nth-child(3),
+            .detail-table td:nth-child(3) { width: 7%; }   /* Кол-во */
+            .detail-table th:nth-child(4),
+            .detail-table td:nth-child(4) { width: 9%; }   /* Масса ед. */
+            .detail-table th:nth-child(5),
+            .detail-table td:nth-child(5) { width: 9%; }   /* Общая масса */
+            .detail-table th:nth-child(6),
+            .detail-table td:nth-child(6) { width: 45%; }  /* Примечание */
+
+            .subgroup-total-row td,
+            .group-total-row td,
+            .global-total-row td {
+                border-top: 2px solid #000 !important;
+                background: #f5f5f5 !important;
+                padding: 0.2mm 0.4mm;
+                font-size: 8pt;
+                font-weight: 700;
+                line-height: 1.3;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            }
+            .group-total-row td {
+                background: #eaeaea !important;
+            }
+            .global-total-row td {
+                background: #d0d0d0 !important;
+            }
+
+            .detail-table tr {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            .group-body { padding: 0.8rem; }
+            .group-header { padding: 0.5rem 0.8rem; }
+            .group-header .total-weight { margin-left: 0; width: 100%; text-align: center; }
+            .detail-table th, .detail-table td { padding: 0.3rem 0.3rem; font-size: 0.7rem; }
+            .subgroup-header-row td { font-size: 0.85rem; padding: 0.2rem 0.5rem; }
+            .pdf-toolbar { flex-direction: column; align-items: stretch; }
+            .pdf-toolbar .info { margin-right: 0; text-align: center; }
+            .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="pdf-toolbar">
+        <button class="btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>
+            Печать / PDF
+        </button>
+        <a href="/home" class="btn">Назад</a>
+    </div>
+
+    <div class="page-header">
+        <h1>📋 Ведомость материалов <small>предварительная</small></h1>
+    </div>
+
+    <div id="globalTotalContainer" class="global-total">
+        <span class="label">🏷️ Общая масса:</span>
+        <span class="value" id="globalTotal">0</span> <span>кг</span>
+    </div>
+
+    <div id="loading" class="loading-indicator">🔄 Загрузка данных...</div>
+    <div id="groupsContainer"></div>
+
+    <div style="margin-top: 1.5rem; border-top: 1px solid #d0ddee; padding-top: 0.8rem; font-size: 0.75rem; color: #3e6180; text-align: center;">
+        💡 <strong>Инструкция для PDF:</strong> нажмите кнопку «Печать / PDF», в диалоге выберите «Сохранить как PDF», установите масштаб <strong>«Вписать»</strong> — вся таблица поместится на одном листе А4 в альбомной ориентации.
+        <br>Стиль текста сохранён (Segoe UI, 8pt), как на экране.
+    </div>
+
+</div>
+
+<script>
+    // ================================================================
+    // 1. ДАННЫЕ
+    // ================================================================
+
+    function getJavaData() {
+        return {
+            groups: [{
+                name: 'Нержавеющая сталь',
+                type: 'withSubgroups',
+                subgroups: [{
+                    name: 'Труба теплообменная',
+                    items: [
+                        { name: 'Труба теплообменная 12×1.5', characteristic: '12×1.5 мм, AISI 304', quantity: 45,
+                            unitWeight: 0.38, totalWeight: 17.1, note: 'бесшовная' },
+                        { name: 'Труба теплообменная 16×2.0', characteristic: '16×2.0 мм, AISI 316', quantity: 32,
+                            unitWeight: 0.69, totalWeight: 22.08, note: 'полированная' },
+                        { name: 'Труба теплообменная 20×2.5', characteristic: '20×2.5 мм, AISI 321', quantity: 28,
+                            unitWeight: 1.08, totalWeight: 30.24, note: '' }
+                    ]
+                }, {
+                    name: 'Листы под давлением',
+                    items: [
+                        { name: 'Лист 3×1500×3000', characteristic: '3×1500×3000 мм, 12Х18Н10Т', quantity: 6,
+                            unitWeight: 106.5, totalWeight: 639.0, note: 'ГОСТ 7350' },
+                        { name: 'Лист 5×1500×6000', characteristic: '5×1500×6000 мм, AISI 304', quantity: 4,
+                            unitWeight: 354.0, totalWeight: 1416.0, note: '' }
+                    ]
+                }, {
+                    name: 'Трубы',
+                    items: [
+                        { name: 'Труба 57×3.5', characteristic: '57×3.5 мм, 12Х18Н10Т', quantity: 18, unitWeight: 4.62,
+                            totalWeight: 83.16, note: 'электросварная' },
+                        { name: 'Труба 89×4.0', characteristic: '89×4.0 мм, AISI 316L', quantity: 12, unitWeight: 8.38,
+                            totalWeight: 100.56, note: '' }
+                    ]
+                }, {
+                    name: 'Листы прочие',
+                    items: [
+                        { name: 'Лист 2×1250×2500', characteristic: '2×1250×2500 мм, AISI 430', quantity: 10,
+                            unitWeight: 49.5, totalWeight: 495.0, note: 'декоративный' },
+                        { name: 'Лист 1.5×1250×2500', characteristic: '1.5×1250×2500 мм, AISI 201', quantity: 15,
+                            unitWeight: 37.5, totalWeight: 562.5, note: '' }
+                    ]
+                }, {
+                    name: 'Поковки',
+                    items: [
+                        { name: 'Поковка Ф150×300', characteristic: 'Ф150×300 мм, 12Х18Н10Т', quantity: 8,
+                            unitWeight: 41.7, totalWeight: 333.6, note: 'поковка' },
+                        { name: 'Поковка Ф200×250', characteristic: 'Ф200×250 мм, AISI 304', quantity: 5,
+                            unitWeight: 61.8, totalWeight: 309.0, note: '' }
+                    ]
+                }, {
+                    name: 'Круг',
+                    items: [
+                        { name: 'Круг Ф30', characteristic: 'Ф30 мм, 12Х18Н10Т', quantity: 120, unitWeight: 5.6,
+                            totalWeight: 672.0, note: 'пруток' },
+                        { name: 'Круг Ф50', characteristic: 'Ф50 мм, AISI 316', quantity: 85, unitWeight: 15.5,
+                            totalWeight: 1317.5, note: '' }
+                    ]
+                }]
+            }, {
+                name: 'Углеродистая сталь',
+                type: 'withSubgroups',
+                subgroups: [{
+                    name: 'Труба теплообменная',
+                    items: [
+                        { name: 'Труба теплообменная 25×2.5', characteristic: '25×2.5 мм, ст20', quantity: 60,
+                            unitWeight: 1.39, totalWeight: 83.4, note: 'бесшовная' },
+                        { name: 'Труба теплообменная 32×3.0', characteristic: '32×3.0 мм, ст20', quantity: 40,
+                            unitWeight: 2.15, totalWeight: 86.0, note: '' },
+                        { name: 'Труба теплообменная 45×3.5', characteristic: '45×3.5 мм, ст20', quantity: 25,
+                            unitWeight: 3.58, totalWeight: 89.5, note: 'горячекатаная' }
+                    ]
+                }, {
+                    name: 'Листы под давлением',
+                    items: [
+                        { name: 'Лист 10×1500×6000', characteristic: '10×1500×6000 мм, ст3', quantity: 3,
+                            unitWeight: 706.5, totalWeight: 2119.5, note: 'ГОСТ 19903' },
+                        { name: 'Лист 16×2000×6000', characteristic: '16×2000×6000 мм, 09Г2С', quantity: 2,
+                            unitWeight: 1507.2, totalWeight: 3014.4, note: '' }
+                    ]
+                }, {
+                    name: 'Трубы',
+                    items: [
+                        { name: 'Труба 76×4.0', characteristic: '76×4.0 мм, ст20', quantity: 22, unitWeight: 7.1,
+                            totalWeight: 156.2, note: 'электросварная' },
+                        { name: 'Труба 108×5.0', characteristic: '108×5.0 мм, ст20', quantity: 15, unitWeight: 12.7,
+                            totalWeight: 190.5, note: '' }
+                    ]
+                }, {
+                    name: 'Листы прочие',
+                    items: [
+                        { name: 'Лист 4×1500×3000', characteristic: '4×1500×3000 мм, ст3', quantity: 12,
+                            unitWeight: 141.3, totalWeight: 1695.6, note: '' },
+                        { name: 'Лист 6×1500×6000', characteristic: '6×1500×6000 мм, ст3', quantity: 8,
+                            unitWeight: 423.9, totalWeight: 3391.2, note: 'горячекатаный' }
+                    ]
+                }, {
+                    name: 'Поковки',
+                    items: [
+                        { name: 'Поковка Ф120×200', characteristic: 'Ф120×200 мм, ст45', quantity: 10,
+                            unitWeight: 17.7, totalWeight: 177.0, note: 'поковка' },
+                        { name: 'Поковка Ф180×300', characteristic: 'Ф180×300 мм, 40Х', quantity: 6, unitWeight: 59.8,
+                            totalWeight: 358.8, note: '' }
+                    ]
+                }, {
+                    name: 'Круг',
+                    items: [
+                        { name: 'Круг Ф20', characteristic: 'Ф20 мм, ст45', quantity: 200, unitWeight: 2.47,
+                            totalWeight: 494.0, note: 'калиброванный' },
+                        { name: 'Круг Ф40', characteristic: 'Ф40 мм, ст45', quantity: 150, unitWeight: 9.86,
+                            totalWeight: 1479.0, note: '' }
+                    ]
+                }]
+            }, {
+                name: 'Прочие изделия',
+                type: 'simple',
+                items: [
+                    { name: 'Крепёжный набор M12×60', characteristic: 'Крепёжный набор M12×60 (болт+гайка+шайба)',
+                        quantity: 240, unitWeight: 0.085, totalWeight: 20.4, note: 'оцинкованный' },
+                    { name: 'Прокладка паронитовая DN50', characteristic: 'Прокладка паронитовая 3 мм, DN50',
+                        quantity: 80, unitWeight: 0.042, totalWeight: 3.36, note: '' },
+                    { name: 'Фланец Ду100 Ру16', characteristic: 'Фланец плоский приварной Ду100, Ру16', quantity: 16,
+                        unitWeight: 4.8, totalWeight: 76.8, note: 'ст20' },
+                    { name: 'Отвод 90° 57×3.5', characteristic: 'Отвод 90° 57×3.5, ст20', quantity: 30, unitWeight: 0.95,
+                        totalWeight: 28.5, note: 'крутоизогнутый' },
+                    { name: 'Переход 89×57', characteristic: 'Переход 89×57, ст20', quantity: 12, unitWeight: 1.85,
+                        totalWeight: 22.2, note: '' },
+                    { name: 'Заглушка Ду150 Ру16', characteristic: 'Заглушка стальная Ду150, Ру16', quantity: 8,
+                        unitWeight: 6.2, totalWeight: 49.6, note: '' }
+                ]
+            }]
+        };
+    }
+
+    // ================================================================
+    // 2. ОТОБРАЖЕНИЕ ОСНОВНОЙ СТРАНИЦЫ
+    // ================================================================
+
+    function renderGroup(group, index) {
+        const isSimple = group.type === 'simple';
+        const groupNum = index + 1;
+        let html = `<div class="group" id="group-${index}">
+                    <div class="group-header" onclick="toggleGroup(${index})">
+                        <span class="toggle-icon" id="group-icon-${index}">▼</span>
+                        <h2>${groupNum}. ${group.name}</h2>
+<!--                        <span class="badge">${isSimple ? 'прочие' : 'с подгруппами'}</span>-->
+                        <span class="total-weight">Масса: <span class="value" id="group-total-${index}">0</span> кг</span>
+                    </div>
+                    <div class="group-body" id="group-body-${index}">`;
+
+        html += `<table class="detail-table">
+                    <thead><tr>
+                        <th style="width:18%;">Наименование</th>
+                        <th style="width:28%;">Характеристика</th>
+                        <th style="width:10%;" class="col-qty">Кол-во</th>
+                        <th style="width:13%;" class="col-unit-weight">Масса ед., кг</th>
+                        <th style="width:13%;" class="col-total-weight">Общая масса, кг</th>
+                        <th style="width:18%;" class="col-note">Примечание</th>
+                    </tr></thead><tbody>`;
+
+        let groupTotal = 0;
+
+        if (isSimple) {
+            const sgTotal = group.items.reduce((s, i) => s + i.totalWeight, 0);
+            groupTotal = sgTotal;
+            group.items.forEach(item => {
+                html += `<tr><td class="col-name">${item.name}</td><td>${item.characteristic}</td>
+                        <td class="col-qty">${item.quantity}</td>
+                        <td class="col-unit-weight">${item.unitWeight.toFixed(2)}</td>
+                        <td class="col-total-weight">${item.totalWeight.toFixed(2)}</td>
+                        <td class="col-note">${item.note || ''}</td></tr>`;
+            });
+            html += `<tr class="subgroup-total-row"><td colspan="4"></td>
+                    <td style="text-align:right;">Итого: ${sgTotal.toFixed(2)}</td><td></td></tr>`;
+        } else {
+            group.subgroups.forEach((subgroup, sgIdx) => {
+                const sgTotal = subgroup.items.reduce((s, i) => s + i.totalWeight, 0);
+                groupTotal += sgTotal;
+                const subNum = `${groupNum}.${sgIdx + 1}`;
+                html += `<tr class="subgroup-header-row"><td colspan="6">${subNum} ${subgroup.name}</td></tr>`;
+                subgroup.items.forEach(item => {
+                    html += `<tr><td class="col-name">${item.name}</td><td>${item.characteristic}</td>
+                            <td class="col-qty">${item.quantity}</td>
+                            <td class="col-unit-weight">${item.unitWeight.toFixed(2)}</td>
+                            <td class="col-total-weight">${item.totalWeight.toFixed(2)}</td>
+                            <td class="col-note">${item.note || ''}</td></tr>`;
+                });
+                html += `<tr class="subgroup-total-row"><td colspan="4"></td>
+                        <td style="text-align:right;">Итого: ${sgTotal.toFixed(2)}</td><td></td></tr>`;
+            });
+        }
+
+        // html += `<tr class="group-total-row"><td colspan="4"></td>
+        //         <td style="text-align:right;">Итого по группе: ${groupTotal.toFixed(2)}</td><td></td></tr>`;
+        html += `</tbody></table></div></div>`;
+        return html;
+    }
+
+    function toggleGroup(index) {
+        const body = document.getElementById(`group-body-${index}`);
+        const icon = document.getElementById(`group-icon-${index}`);
+        if (body.classList.contains('collapsed')) {
+            body.classList.remove('collapsed');
+            icon.classList.remove('collapsed');
+            icon.textContent = '▼';
+        } else {
+            body.classList.add('collapsed');
+            icon.classList.add('collapsed');
+            icon.textContent = '▶';
+        }
+    }
+
+    // ================================================================
+    // 3. ЗАГРУЗКА ДАННЫХ
+    // ================================================================
+
+    function loadDataFromJava() {
+        return new Promise(resolve => setTimeout(() => resolve(getJavaData()), 400));
+    }
+
+    async function renderPage() {
+        try {
+            const data = await loadDataFromJava();
+            const container = document.getElementById('groupsContainer');
+            let html = '', globalTotal = 0;
+
+            data.groups.forEach((group, index) => {
+                html += renderGroup(group, index);
+                let groupTotal = 0;
+                if (group.type === 'simple') {
+                    groupTotal = group.items.reduce((s, i) => s + i.totalWeight, 0);
+                } else {
+                    group.subgroups.forEach(sg => {
+                        groupTotal += sg.items.reduce((s, i) => s + i.totalWeight, 0);
+                    });
+                }
+                globalTotal += groupTotal;
+                window._groupTotals = window._groupTotals || {};
+                window._groupTotals[index] = groupTotal;
+            });
+
+            container.innerHTML = html;
+
+            for (let i = 0; i < data.groups.length; i++) {
+                const el = document.getElementById(`group-total-${i}`);
+                if (el && window._groupTotals && window._groupTotals[i] !== undefined) {
+                    el.textContent = window._groupTotals[i].toFixed(2);
+                }
+            }
+
+            document.getElementById('globalTotal').textContent = globalTotal.toFixed(2);
+            document.getElementById('loading').style.display = 'none';
+        } catch(e) {
+            console.error(e);
+            document.getElementById('loading').textContent = '❌ Ошибка загрузки данных из Java';
+            document.getElementById('loading').style.color = '#b13a3a';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderPage);
+</script>
+
+</body>
+</html>

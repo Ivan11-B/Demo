@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расчетная система с таблицей результатов</title>
+    <link rel="stylesheet" href="/css/style.css">
+<!--    <script src="/js/script.js" defer></script>-->
+</head>
+<body>
+<div class="container">
+    <form th:action="@{/logout}" method="post">
+<!--        <button id="resetBtnExit" type="submit" class="button-group" >-->
+<!--            <i class="fas fa-sign-out-alt"></i> Выход пользователя-->
+<!--        </button>-->
+    </form>
+    <h1>Предварительная ведомость материалов</h1>
+    <p class="subtitle">Введите параметры для расчета</p>
+    <form id="calculationForm" method="post" action="/calculation">
+
+        <div class="input-section">
+
+            <div class="section-title">Параметры расчета</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="label-name" for="name">Наименование:</label>
+                    <input type="text" id="name"  name="name" placeholder="Наименование аппарата" value="Теплообменник">
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="type">Тип аппарата:</label>
+                    <select id="type" name="type">
+                        <option value="ТНГ">ТНГ</option>
+                        <option value="ТПГ">ТПГ</option>
+                        <option value="ТУГ">ТУГ</option>
+                        <option value="ПНГ">ПНГ</option>
+                    </select>
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="diameter-vessel">Диаметр, мм:</label>
+                    <select id="diameter-vessel" name="diameterVessel">
+                        <option value="273">273</option>
+                        <option value="325">325</option>
+                        <option value="400">400</option>
+                        <option value="426">426</option>
+                        <option value="500">500</option>
+                        <option value="600">600</option>
+                        <option value="700">700</option>
+                        <option value="800">800</option>
+                        <option value="900">900</option>
+                        <option value="1000">1000</option>
+                        <option value="1100">1100</option>
+                        <option value="1200">1200</option>
+                        <option value="1300">1300</option>
+                        <option value="1400">1400</option>
+                        <option value="1500">1500</option>
+                        <option value="1600">1600</option>
+                        <option value="1700">1700</option>
+                        <option value="1800">1800</option>
+                        <option value="1900">1900</option>
+                        <option value="2000">2000</option>
+                        <option value="2200">2200</option>
+                    </select>
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="pressure-tube">Давление тр/пр, МПа:</label>
+                    <select id="pressure-tube" name="pressureTube">
+                        <option value="0.6">0,6</option>
+                        <option value="1.0">1,0</option>
+                        <option value="1.6">1,6</option>
+                        <option value="2.5">2,5</option>
+                        <option value="4.0">4,0</option>
+                        <option value="6.3">6,3</option>
+                        <option value="8.0">8,0</option>
+                        <option value="10.0">10,0</option>
+                        <option value="16.0">16,0</option>
+                    </select>
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="pressure-inter-tube">Давление межтр/пр, МПа:</label>
+                    <select id="pressure-inter-tube" name="pressureInterTube">
+                        <option value="0.6">0,6</option>
+                        <option value="1.0">1,0</option>
+                        <option value="1.6">1,6</option>
+                        <option value="2.5">2,5</option>
+                        <option value="4.0">4,0</option>
+                        <option value="6.3">6,3</option>
+                        <option value="8.0">8,0</option>
+                        <option value="10.0">10,0</option>
+                        <option value="16.0">16,0</option>
+                    </select>
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="diameter-tube">Диаметр т/о трубы, мм:</label>
+                    <select id="diameter-tube" name="diameterTube">
+                        <option value="16">16</option>
+                        <option value="20">20</option>
+                        <option value="22">22</option>
+                        <option value="25">25</option>
+                        <option value="32">32</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="length-tube">Длина т/о труб, мм:</label>
+                    <input type="number" id="length-tube" name="lengthTube" placeholder="Введите число" step="100">
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="number-of-moves">Количество ходов:</label>
+                    <select id="number-of-moves" name="numberOfMoves">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="number-vessel">Номер заявки: СИ-</label>
+                    <input type="number" id="number-vessel" name="numberVessel" placeholder="Введите номер" step="any">
+                </div>
+
+
+
+
+            </div>
+            <div class="section-title">Дополнительные параметры</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="label-name" for="standard">Норматив:</label>
+                    <select id="standard" name="standard">
+                        <option value="ТУ 28.25.11-001-46593287-2022">ТУ 28.25.11-001-46593287-2022</option>
+                        <option value=""></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="quantity-tube">Количество труб, шт:</label>
+                    <input type="number" id="quantity-tube" name="quantityTube" placeholder="Введите количество" step="any">
+                </div>
+
+                <div class="form-group-min">
+                    <label class="label-name" for="thickness-tube">Толщина трубы, мм:</label>
+                    <select id="thickness-tube" name="thicknessTube">
+                        <option value="0.8">0,8</option>
+                        <option value="1.0">1,0</option>
+                        <option value="1.5">1,5</option>
+                        <option value="2.0">2,0</option>
+                        <option value="2.5">2,5</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="pressure-tube-calculate">Расчетное давление тр/пр, МПа:</label>
+                    <input type="number" id="pressure-tube-calculate" name="pressureTubeCalculate" placeholder="Введите число">
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="pressure-inter-tube-calculate">Расчетное давление межтр/пр, МПа:</label>
+                    <input type="number" id="pressure-inter-tube-calculate" name="pressureInterTubeCalculate" placeholder="Введите число">
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="temperature-tube-calculate">Расчетная температура тр/пр, град:</label>
+                    <input type="number" id="temperature-tube-calculate" name="temperatureTubeCalculate" placeholder="Введите число">
+                </div>
+                <div class="form-group">
+                    <label class="label-name" for="temperature-inter-tube-calculate">Расчетная температура межтр/пр, град:</label>
+                    <input type="number" id="temperature-inter-tube-calculate" name="temperatureInterTubeCalculate" placeholder="Введите число">
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="button-group">
+            <button type="submit" id="calculateBtn">
+                <span>⚡</span> Рассчитать
+            </button>
+
+            <button type="button" id="resetBtn" onclick="document.getElementById('calculationForm').reset()">
+                <span>🔄</span> Сбросить
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
