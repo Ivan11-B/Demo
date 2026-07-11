@@ -12,11 +12,11 @@ body {
 
 .container {
     max-width: 1400px;
-    margin: 20px auto;
+    margin: 10px auto;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    padding: 10px;
 }
 
 h1 {
@@ -35,7 +35,7 @@ h1 {
 
 .input-section {
     background-color: #f8fafd;
-    padding: 25px;
+    padding: 10px;
     border-radius: 10px;
     margin-bottom: 30px;
     border: 1px solid #e1e8ed;
@@ -46,7 +46,7 @@ h1 {
     font-weight: 600;
     color: #3498db;
     margin-bottom: 20px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     border-bottom: 2px solid #3498db;
 }
 
@@ -76,7 +76,7 @@ h1 {
     min-width: 300px;
 }
 .label-name {
-    min-height: 55px;
+    min-height: 40px;
 }
 
 label {
@@ -89,7 +89,7 @@ label {
 
 input, select, textarea {
     width: 100%;
-    padding: 12px 15px;
+    padding: 10px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
@@ -120,12 +120,12 @@ input:focus, select:focus, textarea:focus {
 
 .button-group {
     display: flex;
-    gap: 15px;
-    margin-top: 30px;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 button {
-    padding: 14px 28px;
+    padding: 10px 15px;
     border: none;
     border-radius: 6px;
     font-size: 16px;
@@ -150,16 +150,6 @@ button {
     box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
 }
 
-#addToTableBtn {
-    background-color: #3498db;
-    color: white;
-    flex: 1;
-}
-
-#addToTableBtn:hover {
-    background-color: #2980b9;
-}
-
 #resetBtn {
     background-color: #e74c3c;
     color: white;
@@ -176,18 +166,8 @@ button {
     background-color: #c0392b;
 }
 
-#clearTableBtn {
-    background-color: #f39c12;
-    color: white;
-    flex: 1;
-}
-
-#clearTableBtn:hover {
-    background-color: #d68910;
-}
-
 .results-section {
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .current-result {

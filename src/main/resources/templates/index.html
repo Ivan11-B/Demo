@@ -6,15 +6,11 @@
     <title>Расчет ведомости материалов</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/styleResult.css">
-    <script src="js/scripts.js" defer></script>
+    <script src="/js/scripts.js" defer></script>
 </head>
 <body>
 <div class="container">
-    <!--    <form th:action="@{/logout}" method="post">-->
-    <!--        <button id="resetBtnExit" type="submit" class="button-group" >-->
-    <!--            <i class="fas fa-sign-out-alt"></i> Выход пользователя-->
-    <!--        </button>-->
-    <!--    </form>-->
+
     <h1>Предварительная ведомость материалов</h1>
     <p class="subtitle">Введите параметры для расчета</p>
     <form id="calculationForm" method="post" action="/calculation">
@@ -208,7 +204,7 @@
         <span class="value" id="globalTotal">0</span> <span>кг</span>
     </div>
 
-    <div id="loading" class="loading-indicator">🔄 Загрузка данных...</div>
+    <div id="loading" class="loading-indicator">🔄 Здесь будет ведомость...</div>
     <div id="groupsContainer"></div>
 
     <div style="margin-top: 1.5rem; border-top: 1px solid #d0ddee; padding-top: 0.8rem; font-size: 0.75rem; color: #3e6180; text-align: center;">
