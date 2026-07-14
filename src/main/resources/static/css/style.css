@@ -26,6 +26,14 @@ h1 {
     font-weight: 700;
 }
 
+input:required {
+    border-color: #888;
+}
+
+input:invalid:not(:placeholder-shown) {
+    border-color: red;
+}
+
 .subtitle {
     text-align: center;
     color: #7f8c8d;

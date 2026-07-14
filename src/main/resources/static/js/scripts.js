@@ -1,72 +1,5 @@
 // ================================================================
-// 1. СБОР ДАННЫХ С ФОРМЫ И ОТПРАВКА ЗАПРОСА НА СЕРВЕР
-// ================================================================
-function collectFormData() {
-    const form = document.getElementById('calculationForm'); //получаем объект формы
-    const formData = new FormData(form);                                 //создаем объект данных в формате ключ-значение
-    const data = {};                                                           //создаем пустой массив
-
-    // Преобразуем FormData в объект
-    for (let [key, value] of formData.entries()) {
-        // Пропускаем пустые значения
-        if (value === '' || value === null || value === undefined) continue;
-
-        // Преобразуем числа в числовой тип
-        if (key === 'diameterVessel' || key === 'pressureTube' ||
-            key === 'pressureInterTube' || key === 'diameterTube' ||
-            key === 'lengthTube' || key === 'numberOfMoves' ||
-            key === 'numberVessel' || key === 'quantityTube' ||
-            key === 'thicknessTube' || key === 'pressureTubeCalculate' ||
-            key === 'pressureInterTubeCalculate' || key === 'temperatureTubeCalculate' ||
-            key === 'temperatureInterTubeCalculate') {
-            data[key] = parseFloat(value) || 0;
-        } else {
-            // текстовые данные просто записываем
-            data[key] = value;
-        }
-    }
-    return data;
-}
-
-// Функция для отправки данных на сервер
-async function sendCalculationData() {
-    try {
-        // Показываем индикатор загрузки
-        document.getElementById('loading').style.display = 'block';
-
-        // Собираем данные из формы
-        const formData = collectFormData();
-
-        console.log('Отправляемые данные:', formData);
-
-        // Отправляем POST-запрос
-        const response = await fetch('/calculation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Получаем ответ в виде JSON
-        const result = await response.json();
-        console.log('Получен ответ:', result);
-
-        return result;
-    } catch (error) {
-        console.error('Ошибка при отправке данных:', error);
-        document.getElementById('loading').style.display = 'none';
-        alert('Произошла ошибка при расчете. Пожалуйста, попробуйте снова.');
-    }
-}
-
-// ================================================================
-// 2. ОТОБРАЖЕНИЕ ОСНОВНОЙ СТРАНИЦЫ
+// 1. ОТОБРАЖЕНИЕ ДАННЫХ
 // ================================================================
 
 function renderGroup(group, index) {
@@ -140,17 +73,13 @@ function toggleGroup(index) {
     }
 }
 
-// ================================================================
-// 3. ЗАГРУЗКА ДАННЫХ
-// ================================================================
-
-async function renderPage() {
+async function renderPage(responseData) {
     try {
-        const data = await sendCalculationData();                                             //получаем данные с сервера DataWrapper
+
         const container = document.getElementById('groupsContainer');    //получаем конейнер в который будем писать html
         let html = '', globalTotal = 0;                                        //создаем html и переменную globalTotal- общая масса
 
-        data.groups.forEach((group, index) => {                                         //проходим каждую группу
+        responseData.groups.forEach((group, index) => {                                         //проходим каждую группу
             html += renderGroup(group, index);                                                //добавляем каждый раз новый html по группам
             let groupTotal = 0;                                                       //создаем переменную groupTotal- масса группы
             if (group.type === 'simple') {                                                    // если простая группа без подгрупп ("Прочее")
@@ -167,7 +96,7 @@ async function renderPage() {
 
         container.innerHTML = html;                                                            //добавляем в контейнер сформированный html
 
-        for (let i = 0; i < data.groups.length; i++) {                                //Проходим по всем группам (по их индексам)
+        for (let i = 0; i < responseData.groups.length; i++) {                                //Проходим по всем группам (по их индексам)
             const el = document.getElementById(`group-total-${i}`);      //Поиск элемента с ID, содержащим вес группы
             if (el && window._groupTotals && window._groupTotals[i] !== undefined) {          //Проверка существования элемента и данных
                 el.textContent = window._groupTotals[i].toFixed(0);                 //Обновление текстового содержимого элемента
@@ -183,4 +112,168 @@ async function renderPage() {
     }
 }
 
-document.getElementById('calculateBtn').addEventListener('click', renderPage);
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    // ----- Элементы DOM -----
+    const form = document.getElementById('calculationForm');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const loadingDiv = document.getElementById('loading');
+    const groupsContainer = document.getElementById('groupsContainer');
+
+    // Список обязательных полей (ID)
+    const requiredFieldIds = [
+        'length-tube',
+        // 'number-vessel',
+        // 'pressure-tube-calculate',
+        // 'pressure-inter-tube-calculate',
+        // 'temperature-tube-calculate',
+        // 'temperature-inter-tube-calculate'
+    ];
+
+    // Создаём контейнеры для сообщений об ошибках
+    const errorSpans = {};
+    requiredFieldIds.forEach(id => {
+        const field = document.getElementById(id);
+        if (!field) return;
+        const errorSpan = document.createElement('span');
+        errorSpan.className = 'validation-message';
+        errorSpan.style.display = 'none';
+        errorSpan.style.color = '#dc3545';
+        errorSpan.style.fontSize = '0.8rem';
+        errorSpan.style.marginTop = '0.2rem';
+        field.parentNode.appendChild(errorSpan);
+        errorSpans[id] = errorSpan;
+
+        // При вводе скрываем ошибку и убираем красную рамку
+        field.addEventListener('input', function () {
+            field.classList.remove('error');
+            errorSpan.style.display = 'none';
+            errorSpan.textContent = '';
+        });
+    });
+
+    // ----- Функция валидации -----
+    function validateForm() {
+        let isValid = true;
+
+        requiredFieldIds.forEach(id => {
+            const field = document.getElementById(id);
+            const span = errorSpans[id];
+            if (!field || !span) return;
+
+            const rawValue = field.value.trim();
+            let errorMsg = '';
+
+            if (rawValue === '') {
+                errorMsg = 'Обязательное поле';
+            } else {
+                const num = Number(rawValue);
+                if (isNaN(num)) {
+                    errorMsg = 'Введите число';
+                } else if ((id === 'length-tube' || id === 'quantity-tube') && num <= 0) {
+                    errorMsg = 'Значение должно быть больше нуля';
+                }
+                // Для давлений и температур допускаются любые числа, кроме NaN
+            }
+
+            if (errorMsg) {
+                field.classList.add('error');
+                span.textContent = errorMsg;
+                span.style.display = 'block';
+                isValid = false;
+            } else {
+                field.classList.remove('error');
+                span.style.display = 'none';
+                span.textContent = '';
+            }
+        });
+
+        return isValid;
+    }
+
+    // ----- Сбор данных формы в объект -----
+    function collectFormData() {
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            // Преобразуем числовые значения
+            if (requiredFieldIds.includes(key) || key === 'number-vessel') {
+                const num = parseFloat(value);
+                data[key] = isNaN(num) ? null : num;
+            } else {
+                data[key] = value;
+            }
+        });
+        return data;
+    }
+
+
+    // ----- Асинхронная отправка -----
+    async function submitCalculation(payload) {
+        // Замените URL на ваш реальный эндпоинт
+        const url = '/calculation';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    // ----- Управление состоянием загрузки -----
+    function setLoading(isLoading) {
+        calculateBtn.disabled = isLoading;
+        calculateBtn.innerHTML = isLoading
+            ? '<span class="spinner"></span> Считаем...'
+            : '<span>⚡</span> Рассчитать';
+        if (isLoading) {
+            loadingDiv.style.display = 'block';
+            groupsContainer.innerHTML = '';
+        }
+    }
+
+    // ----- Обработчик кнопки «Рассчитать» -----
+    calculateBtn.addEventListener('click', async function () {
+        // 1. Валидация
+        if (!validateForm()) {
+            // Прокрутка к первому ошибочному полю
+            const firstError = document.querySelector('.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        // 2. Сбор данных
+        const payload = collectFormData();
+
+        // Дополнительная проверка на null (на всякий случай)
+        if (Object.values(payload).some(v => v === null)) {
+            alert('Некоторые обязательные поля не заполнены или содержат некорректные данные.');
+            return;
+        }
+
+        // 3. Отправка
+        setLoading(true);
+        try {
+            const responseData = await submitCalculation(payload);
+            await renderPage(responseData);
+
+        } catch (error) {
+            console.error('Ошибка при расчёте:', error);
+            alert('Не удалось выполнить расчёт. Проверьте соединение с сервером.');
+            loadingDiv.style.display = 'block';
+            groupsContainer.innerHTML = '';
+        } finally {
+            setLoading(false);
+        }
+    });
+
+});

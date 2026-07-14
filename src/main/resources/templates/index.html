@@ -13,7 +13,7 @@
 
     <h1>Предварительная ведомость материалов</h1>
     <p class="subtitle">Введите параметры для расчета</p>
-    <form id="calculationForm" method="post" action="/calculation">
+    <form id="calculationForm" novalidate>
         <div class="input-section">
             <div class="section-title">Параметры расчета</div>
             <div class="form-row">
@@ -102,7 +102,7 @@
 
                 <div class="form-group">
                     <label class="label-name" for="length-tube">Длина т/о труб, мм:</label>
-                    <input type="number" id="length-tube" name="lengthTube" placeholder="Длина трубы" step="any">
+                    <input type="number" id="length-tube" name="lengthTube" placeholder="Длина трубы" step="any" required>
                 </div>
 
                 <div class="form-group-min">
@@ -174,6 +174,28 @@
                         град:</label>
                     <input type="number" id="temperature-inter-tube-calculate" name="temperatureInterTubeCalculate"
                            placeholder="Температура">
+                </div>
+
+                <div class="form-group">
+                    <label class="label-name" for="material-tube">Материал труб т/о</label>
+                    <select id="material-tube" name="materialTube">
+                        <option value="Сталь 20">Сталь 20</option>
+                        <option value="12Х18Н10Т">12Х18Н10Т</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label-name" for="material-tube-space">Материал тр/пр</label>
+                    <select id="material-tube-space" name="materialTubeSpace">
+                        <option value="09Г2С">09Г2С</option>
+                        <option value="12Х18Н10Т">12Х18Н10Т</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label-name" for="material-inter-tube-space">Материал межтр/пр</label>
+                    <select id="material-inter-tube-space" name="materialInterTubeSpace">
+                        <option value="09Г2С">09Г2С</option>
+                        <option value="12Х18Н10Т">12Х18Н10Т</option>
+                    </select>
                 </div>
 
             </div>

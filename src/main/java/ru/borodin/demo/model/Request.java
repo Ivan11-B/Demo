@@ -36,4 +36,10 @@ public class Request {
 
     private String temperatureInterTubeCalculate;
 
+    private String materialTube;
+
+    private String materialTubeSpace;
+
+    private String materialInterTubeSpace;
+
 }
