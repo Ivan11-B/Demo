@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: ivan
+      comment: Создание таблицы гаек и загрузка данных
+      changes:
+        - createTable:
+            tableName: nuts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: diameter
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: weight
+                  type: DECIMAL
+                  constraints:
+                    nullable: false
+        - loadData:
+            tableName: nuts
+            file: data/nuts.csv
+            relativeToChangelogFile: true
+            separator: ","

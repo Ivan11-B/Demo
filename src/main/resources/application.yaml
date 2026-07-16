@@ -1,3 +1,28 @@
+server:
+  port: 8080
+
 spring:
-  application:
-    name: demo
+  sql:
+    init:
+      mode: never
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/demoApp_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yml
+    drop-first: true                                                    #Очистка changelog- убрать потом
+    enabled: true
+
+#logging:
+#  level:
+#    liquibase: DEBUG
+#    org.springframework.boot: DEBUG

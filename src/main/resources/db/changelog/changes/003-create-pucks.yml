@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: ivan
+      comment: Создание таблицы шайб и загрузка данных
+      changes:
+        - createTable:
+            tableName: pucks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: diameter
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: weight
+                  type: DECIMAL
+                  constraints:
+                    nullable: false
+        - loadData:
+            tableName: pucks
+            file: data/pucks.csv
+            relativeToChangelogFile: true
+            separator: ","

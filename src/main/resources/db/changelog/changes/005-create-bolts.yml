@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: ivan
+      comment: Создание таблицы шпилек и загрузка данных
+      changes:
+        - createTable:
+            tableName: bolts
+            columns:
+              - column:
+                  name: diameter
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: length
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: weight
+                  type: DECIMAL
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: bolts
+            columnNames: diameter, length
+            constraintName: pk_bolts
+        - loadData:
+            tableName: bolts
+            file: data/bolts.csv
+            relativeToChangelogFile: true
+            separator: ","

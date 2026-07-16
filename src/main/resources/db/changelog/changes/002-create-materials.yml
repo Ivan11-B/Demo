@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: ivan
+      changes:
+        - createTable:
+            tableName: materials
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: density
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+        - loadData:
+            tableName: materials
+            file: data/materials.csv
+            relativeToChangelogFile: true
+            separator: ","
+            columns:
+              - column:
+                  name: name
+                  header: "name"
+              - column:
+                  name: density
+                  header: "density"

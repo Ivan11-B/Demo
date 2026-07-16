@@ -27,11 +27,6 @@ public class MainController {
         System.out.println(request);
         System.out.println("Контроллер отработал");
 
-        return dataService.getData();
-    }
-
-    @GetMapping("/home2")
-    public String home2() {
-        return "r";
+        return dataService.getData(request);
     }
 }

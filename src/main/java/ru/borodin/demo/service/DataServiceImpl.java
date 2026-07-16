@@ -1,22 +1,25 @@
 package ru.borodin.demo.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.borodin.demo.model.DataWrapper;
-import ru.borodin.demo.model.Group;
-import ru.borodin.demo.model.Item;
-import ru.borodin.demo.model.Subgroup;
+import ru.borodin.demo.model.*;
+import ru.borodin.demo.repository.MaterialRepository;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DataServiceImpl implements DataService {
+
+    private final MaterialRepository materialRepository;
     @Override
-    public DataWrapper getData() {
+    public DataWrapper getData(Request request) {
+
 
         Item item = Item.builder()
-                .name("деталь 1")
+                .name("Труба")
                 .characteristic("характеристика")
-                .quantity(1)
+                .quantity(materialRepository.findMaterialByName(request.getMaterialTube()).getDensity())
                 .unitWeight(10.5)
                 .totalWeight(55.6)
                 .note("примечание")

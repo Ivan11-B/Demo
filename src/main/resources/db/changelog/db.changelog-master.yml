@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: changes/001-create-users.yml
+      relativeToChangelogFile: true               #путь начинается с каталога changelog
+  - include:
+      file: changes/002-create-materials.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/003-create-pucks.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/004-create-nuts.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/005-create-bolts.yml
+      relativeToChangelogFile: true
+
+
+
