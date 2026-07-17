@@ -8,25 +8,25 @@ public class Request {
 
     private String type;
 
-    private String diameterVessel;
+    private int diameterVessel;
 
     private String pressureTube;
 
     private String pressureInterTube;
 
-    private String diameterTube;
+    private int diameterTube;
 
-    private String lengthTube;
+    private int lengthTube;
 
-    private String numberOfMoves;
+    private int numberOfMoves;
 
     private String numberVessel;
 
     private String standard;
 
-    private String quantityTube;
+    private int quantityTube;
 
-    private String thicknessTube;
+    private double thicknessTube;
 
     private String pressureTubeCalculate;
 

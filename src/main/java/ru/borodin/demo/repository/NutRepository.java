@@ -4,14 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.borodin.demo.model.Material;
+import ru.borodin.demo.model.Nut;
+import ru.borodin.demo.model.Puck;
 
 import java.util.Optional;
 
 @Repository
-public interface MaterialRepository extends JpaRepository<Material,Integer> {
+public interface NutRepository extends JpaRepository<Nut, Integer> {
 
-
-    @Query("select density from Material where name = :name")
-    Optional<Integer> findDensity(@Param("name") String name);
+    @Query("select weight from Nut where diameter = :diameter")
+    Optional<Double> findWeight(@Param("diameter") int diameter);
 }

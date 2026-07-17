@@ -6,22 +6,17 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: pucks
+            schemaName: public
             columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
               - column:
                   name: diameter
                   type: INTEGER
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: weight
-                  type: DECIMAL
+                  type: DECIMAL(10,3)
                   constraints:
                     nullable: false
         - loadData:
@@ -29,3 +24,10 @@ databaseChangeLog:
             file: data/pucks.csv
             relativeToChangelogFile: true
             separator: ","
+            columns:
+              - column:
+                  header: diameter
+                  name: "diameter"
+              - column:
+                  header: weight
+                  name: "weight"

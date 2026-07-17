@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "materials")
+@Table(name = "pucks")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Material {
+public class Puck {
 
     @Id
     @EqualsAndHashCode.Include
-    private String name;
+    private int diameter;
 
-    private Integer density;
+    private double weight;
 }

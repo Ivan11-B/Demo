@@ -1,20 +1,20 @@
 databaseChangeLog:
   - changeSet:
-      id: 5
+      id: 6
       author: ivan
-      comment: Создание таблицы шпилек и загрузка данных
+      comment: Создание таблицы днищ и загрузка данных
       changes:
         - createTable:
-            tableName: bolts
+            tableName: bottoms
             schemaName: public
             columns:
               - column:
-                  name: diameter
+                  name: thickness
                   type: INTEGER
                   constraints:
                     nullable: false
               - column:
-                  name: length
+                  name: diameter
                   type: INTEGER
                   constraints:
                     nullable: false
@@ -24,21 +24,21 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addPrimaryKey:
-            tableName: bolts
-            columnNames: diameter, length
-            constraintName: pk_bolts
+            tableName: bottoms
+            columnNames: thickness, diameter
+            constraintName: pk_bottoms
         - loadData:
-            tableName: bolts
-            file: data/bolts.csv
+            tableName: bottoms
+            file: data/bottoms.csv
             relativeToChangelogFile: true
-            separator: ","
+            separator: ";"
             columns:
+              - column:
+                  header: thickness
+                  name: "thickness"
               - column:
                   header: diameter
                   name: "diameter"
-              - column:
-                  header: length
-                  name: "length"
               - column:
                   header: weight
                   name: "weight"
